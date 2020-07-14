@@ -23,7 +23,8 @@ namespace WindowsFormsApp1
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
-            
+
+
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UpdateData));
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.label1 = new System.Windows.Forms.Label();
+            this.label1 = new MaterialSkin.Controls.MaterialLabel();
             this.SuspendLayout();
             // 
             // listBox1
@@ -39,26 +39,32 @@
             this.listBox1.Font = new System.Drawing.Font("微软雅黑", 9F);
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 20;
-            this.listBox1.Location = new System.Drawing.Point(12, 105);
+            this.listBox1.Location = new System.Drawing.Point(13, 135);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(420, 164);
+            this.listBox1.Size = new System.Drawing.Size(449, 164);
             this.listBox1.TabIndex = 0;
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 75);
+            this.progressBar1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.progressBar1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.progressBar1.Location = new System.Drawing.Point(13, 105);
             this.progressBar1.Maximum = 10000;
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(420, 24);
+            this.progressBar1.Size = new System.Drawing.Size(449, 24);
             this.progressBar1.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("微软雅黑", 12F);
-            this.label1.Location = new System.Drawing.Point(58, 24);
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Depth = 0;
+            this.label1.Font = new System.Drawing.Font("思源黑体", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.label1.Location = new System.Drawing.Point(72, 74);
+            this.label1.MouseState = MaterialSkin.MouseState.HOVER;
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(318, 27);
+            this.label1.Size = new System.Drawing.Size(303, 28);
             this.label1.TabIndex = 2;
             this.label1.Text = "正在更新游戏数据，请勿关闭窗口!";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -68,11 +74,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(445, 281);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(502, 313);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.listBox1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "UpdateData";
@@ -88,6 +94,6 @@
 
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Label label1;
+        private MaterialSkin.Controls.MaterialLabel label1;
     }
 }

@@ -9,14 +9,21 @@ using System.Threading;
 using FGOServantBasicInformationAnalyzer;
 using FGOServantBasicInformationAnalyzer.Properties;
 using WindowsFormsApp1;
+using MaterialSkin.Controls;
+using MaterialSkin;
 
 namespace FGOServantBasicInformationAnalyzer
 {
-    public partial class UpdateData : Form
+    public partial class UpdateData : MaterialForm
     {
         public UpdateData()
         {
             InitializeComponent();
+            var materialSkinManager = MaterialSkinManager.Instance;
+            materialSkinManager.AddFormToManage(this);
+            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+            materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
+
         }
 
         private void UpdateData_Load(object sender, EventArgs e)

@@ -8,15 +8,22 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using FGOServantBasicInformationAnalyzer;
 using FGOServantBasicInformationAnalyzer.Properties;
+using MaterialSkin.Controls;
+using MaterialSkin;
 
 namespace WindowsFormsApp1
 {
-    public partial class FGOServantBasicInformationAnalyzer : Form
+    public partial class FGOServantBasicInformationAnalyzer : MaterialForm
     {
         public FGOServantBasicInformationAnalyzer()
         {
             InitializeComponent();
             Control.CheckForIllegalCrossThreadCalls = false;
+            var materialSkinManager = MaterialSkinManager.Instance;
+            materialSkinManager.AddFormToManage(this);
+            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+            materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
+            
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -69,7 +69,7 @@ namespace WindowsFormsApp1
                 {
 
 
-                    ((TextBox)c).Font = new System.Drawing.Font("微软雅黑", 9F);
+                    ((TextBox)c).Font = new System.Drawing.Font("FOT - Fate_Go Skip B", 10.5F);
                     ((TextBox)c).TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 
                 }

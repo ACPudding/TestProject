@@ -182,7 +182,7 @@ namespace WindowsFormsApp1
             string mstTreasureDeviceLv = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv");
             JArray mstTreasureDeviceLvArray = (JArray)JsonConvert.DeserializeObject(mstTreasureDeviceLv);
             string[] PPK = new string[100];
-            PPK[11] = "A"; PPK[12] = "A+"; PPK[13] = "A++"; PPK[14] = "A-"; PPK[21] = "B"; PPK[22] = "B+"; PPK[23] = "B++"; PPK[24] = "B-"; PPK[31] = "C"; PPK[32] = "C+"; PPK[33] = "C++"; PPK[34] = "C-"; PPK[41] = "D"; PPK[42] = "D+"; PPK[43] = "D++"; PPK[44] = "D-"; PPK[51] = "E"; PPK[52] = "E+"; PPK[53] = "E++"; PPK[54] = "E-"; PPK[61] = "EX"; PPK[98] = "-"; PPK[0] = "-";
+            PPK[11] = "A"; PPK[12] = "A+"; PPK[13] = "A++"; PPK[14] = "A-"; PPK[15] = "A+++"; PPK[21] = "B"; PPK[22] = "B+"; PPK[23] = "B++"; PPK[24] = "B-"; PPK[25] = "B+++"; PPK[31] = "C"; PPK[32] = "C+"; PPK[33] = "C++"; PPK[34] = "C-"; PPK[35] = "C+++"; PPK[41] = "D"; PPK[42] = "D+"; PPK[43] = "D++"; PPK[44] = "D-"; PPK[45] = "D+++"; PPK[51] = "E"; PPK[52] = "E+"; PPK[53] = "E++"; PPK[54] = "E-"; PPK[55] = "E+++"; PPK[61] = "EX"; PPK[98] = "-"; PPK[0] = "-"; PPK[99] = "?";
             var svtName = "";
             var svtNameDisplay = "unknown";
             string[] ClassName = new string[1500];
@@ -1103,7 +1103,7 @@ namespace WindowsFormsApp1
             if (SkillLvs.EEB)
             {
                 JibanStringData.str1 = "该解析器由闲着蛋疼啥也不会的现学C#的烂技术的作者ACPudding编写而成.";
-                JibanStringData.str2 = "当前版本: V1.5_b4";
+                JibanStringData.str2 = "当前版本: V1.5_b5";
                 JibanStringData.str3 = "下载游戏数据与解密部分拷贝了nishuoshenme的FGO资源解析器的代码.\r\ngithub地址: https://www.github.com/nishuoshenme";
                 JibanStringData.str4 = "作者BGO ID 爱吸吸果冻 \r\n日服ID エイシープリン";
                 JibanStringData.str5 = "B站 ID ACPudding";

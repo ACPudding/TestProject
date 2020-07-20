@@ -27,6 +27,7 @@ namespace FGOServantBasicInformationAnalyzer.Properties
             textBox6.Text = SkillLvs.skilllv1sval;
             textBox7.Text = SkillLvs.skilllv6sval;
             textBox8.Text = SkillLvs.skilllv10sval;
+            textBox9.Text = SkillLvs.SKLFuncstr;
         }
     }
 }

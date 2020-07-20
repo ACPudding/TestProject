@@ -32,6 +32,8 @@ namespace FGOServantBasicInformationAnalyzer
         public static string SKL1str;
         public static string SKL2str;
         public static string SKL3str;
+        public static string SKLFuncstr;
+        public static string TDFuncstr;
         public static string[][] skilllv1EffectArray;
         public static string[][] skilllv6EffectArray;
         public static string[][] skilllv10EffectArray;

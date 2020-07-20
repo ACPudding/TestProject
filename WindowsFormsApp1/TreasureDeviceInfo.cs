@@ -38,6 +38,7 @@ namespace FGOServantBasicInformationAnalyzer
             textBox3.Text = TreasureDevices.TD3Display;
             textBox4.Text = TreasureDevices.TD4Display;
             textBox5.Text = TreasureDevices.TD5Display;
+            textBox6.Text = SkillLvs.TDFuncstr;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -310,8 +311,7 @@ namespace WindowsFormsApp1
             float deathrate = 0;
             var svtdeathrate = "unknown";
             var svtillust = "unknown"; //illustID 不输出
-            var svtcv = "unknown";
-            ; //CVID 不输出
+            var svtcv = "unknown"; //CVID 不输出
             var svtcollectionid = "unknown";
             var svtCVName = "unknown";
             var svtILLUSTName = "unknown";
@@ -400,9 +400,7 @@ namespace WindowsFormsApp1
                         .Replace("3", "地").Replace("4", "星").Replace("5", "兽");
                     CardArrange = mstSvtobjtmp["cardIds"].ToString().Replace("\n", "").Replace("\t", "")
                         .Replace("\r", "").Replace(" ", "").Replace("2", "B").Replace("1", "A").Replace("3", "Q");
-                    foreach (var c in CardArrange)
-                        if (c == 'A')
-                            svtArtsCardQuantity++;
+                    svtArtsCardQuantity += CardArrange.Count(c => c == 'A');
                     classData = int.Parse(svtClass);
                     genderData = int.Parse(svtgender);
                     starrate = float.Parse(svtstarrate) / 10;
@@ -418,9 +416,7 @@ namespace WindowsFormsApp1
                     var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
                     svtArtsCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    foreach (var c in svtArtsCardhitDamage)
-                        if (c == ',')
-                            svtArtsCardhit++;
+                    svtArtsCardhit += svtArtsCardhitDamage.Count(c => c == ',');
                 }
 
                 if (((JObject) svtCardtmp)["svtId"].ToString() == svtID &&
@@ -429,9 +425,7 @@ namespace WindowsFormsApp1
                     var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
                     svtBustersCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    foreach (var c in svtBustersCardhitDamage)
-                        if (c == ',')
-                            svtBustersCardhit++;
+                    svtBustersCardhit += svtBustersCardhitDamage.Count(c => c == ',');
                 }
 
                 if (((JObject) svtCardtmp)["svtId"].ToString() == svtID &&
@@ -440,9 +434,7 @@ namespace WindowsFormsApp1
                     var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
                     svtQuicksCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    foreach (var c in svtQuicksCardhitDamage)
-                        if (c == ',')
-                            svtQuicksCardhit++;
+                    svtQuicksCardhit += svtQuicksCardhitDamage.Count(c => c == ',');
                 }
 
                 if (((JObject) svtCardtmp)["svtId"].ToString() == svtID &&
@@ -451,9 +443,7 @@ namespace WindowsFormsApp1
                     var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
                     svtExtraCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    foreach (var c in svtExtraCardhitDamage)
-                        if (c == ',')
-                            svtExtraCardhit++;
+                    svtExtraCardhit += svtExtraCardhitDamage.Count(c => c == ',');
                 }
             }
 
@@ -539,12 +529,11 @@ namespace WindowsFormsApp1
                     SkillLvs.skillname3 = skill3Name;
                 }
 
-                foreach (var classpassiveidtmp in svtClassPassiveIDArray)
-                    if (((JObject) skilltmp)["id"].ToString() == classpassiveidtmp)
-                    {
-                        var mstsvtPskillobjtmp = JObject.Parse(skilltmp.ToString());
-                        svtClassPassiveList.Add(mstsvtPskillobjtmp["name"].ToString());
-                    }
+                svtClassPassiveList.AddRange(from classpassiveidtmp in svtClassPassiveIDArray
+                    where ((JObject) skilltmp)["id"].ToString() == classpassiveidtmp
+                    select JObject.Parse(skilltmp.ToString())
+                    into mstsvtPskillobjtmp
+                    select mstsvtPskillobjtmp["name"].ToString());
             }
 
             foreach (var skillDetailtmp in mstSkillDetailArray) //查找某个字段与值
@@ -588,9 +577,7 @@ namespace WindowsFormsApp1
                     svtNPCardType = mstsvtTDobjtmp["cardId"].ToString().Replace("2", "Buster").Replace("1", "Arts")
                         .Replace("3", "Quick");
                     TreasureDevices.TDcardtypeDisplay = svtNPCardType;
-                    foreach (var c in svtNPCardhitDamage)
-                        if (c == ',')
-                            svtNPCardhit++;
+                    svtNPCardhit += svtNPCardhitDamage.Count(c => c == ',');
                     svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
                     TreasureDevices.TDID = svtTDID;
                     TreasureDevices.TDcardHitsDisplay = svtNPCardhit + " hit " + svtNPCardhitDamage;
@@ -716,43 +703,41 @@ namespace WindowsFormsApp1
                     break;
                 }
 
-                if (((JObject) TreasureDevicestmp)["seqId"].ToString() == svtID &&
-                    ((JObject) TreasureDevicestmp)["ruby"].ToString() == "-" &&
-                    ((JObject) TreasureDevicestmp)["id"].ToString().Length == 3)
+                if (((JObject) TreasureDevicestmp)["seqId"].ToString() != svtID ||
+                    ((JObject) TreasureDevicestmp)["ruby"].ToString() != "-" ||
+                    ((JObject) TreasureDevicestmp)["id"].ToString().Length != 3) continue;
+                var mstTDobjtmp2 = JObject.Parse(TreasureDevicestmp.ToString());
+                NPName = mstTDobjtmp2["name"].ToString();
+                NPrank = mstTDobjtmp2["rank"].ToString();
+                NPruby = mstTDobjtmp2["ruby"].ToString();
+                NPtypeText = mstTDobjtmp2["typeText"].ToString();
+                svtNPDamageType = mstTDobjtmp2["effectFlag"].ToString().Replace("0", "-").Replace("1", "群体宝具")
+                    .Replace("2", "单体宝具");
+                if (svtNPDamageType == "-")
                 {
-                    var mstTDobjtmp2 = JObject.Parse(TreasureDevicestmp.ToString());
-                    NPName = mstTDobjtmp2["name"].ToString();
-                    NPrank = mstTDobjtmp2["rank"].ToString();
-                    NPruby = mstTDobjtmp2["ruby"].ToString();
-                    NPtypeText = mstTDobjtmp2["typeText"].ToString();
-                    svtNPDamageType = mstTDobjtmp2["effectFlag"].ToString().Replace("0", "-").Replace("1", "群体宝具")
-                        .Replace("2", "单体宝具");
-                    if (svtNPDamageType == "-")
+                    svtNPCardhit = 0;
+                    svtNPCardhitDamage = "[ - ]";
+                }
+
+                NPDetail = "该ID的配卡与宝具解析不准确,请留意.";
+                foreach (var svtTreasureDevicestmp in mstSvtTreasureDevicedArray) //查找某个字段与值
+                    if (((JObject) svtTreasureDevicestmp)["treasureDeviceId"].ToString() ==
+                        ((JObject) TreasureDevicestmp)["id"].ToString())
                     {
-                        svtNPCardhit = 0;
-                        svtNPCardhitDamage = "[ - ]";
+                        var mstsvtTDobjtmp2 = JObject.Parse(svtTreasureDevicestmp.ToString());
+                        svtNPCardhitDamage = mstsvtTDobjtmp2["damage"].ToString().Replace("\n", "")
+                            .Replace("\t", "").Replace("\r", "").Replace(" ", "");
+                        svtNPCardType = mstsvtTDobjtmp2["cardId"].ToString().Replace("2", "Buster")
+                            .Replace("1", "Arts").Replace("3", "Quick");
+                        break;
                     }
 
-                    NPDetail = "该ID的配卡与宝具解析不准确,请留意.";
-                    foreach (var svtTreasureDevicestmp in mstSvtTreasureDevicedArray) //查找某个字段与值
-                        if (((JObject) svtTreasureDevicestmp)["treasureDeviceId"].ToString() ==
-                            ((JObject) TreasureDevicestmp)["id"].ToString())
-                        {
-                            var mstsvtTDobjtmp2 = JObject.Parse(svtTreasureDevicestmp.ToString());
-                            svtNPCardhitDamage = mstsvtTDobjtmp2["damage"].ToString().Replace("\n", "")
-                                .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                            svtNPCardType = mstsvtTDobjtmp2["cardId"].ToString().Replace("2", "Buster")
-                                .Replace("1", "Arts").Replace("3", "Quick");
-                            break;
-                        }
-
-                    button2.Enabled = false;
-                    button3.Enabled = false;
-                    button6.Enabled = false;
-                    button9.Enabled = false;
-                    button10.Enabled = false;
-                    break;
-                }
+                button2.Enabled = false;
+                button3.Enabled = false;
+                button6.Enabled = false;
+                button9.Enabled = false;
+                button10.Enabled = false;
+                break;
             }
 
             if (NPDetail == "unknown")
@@ -761,23 +746,9 @@ namespace WindowsFormsApp1
                     {
                         var TreasureDevicesobjtmp2 = JObject.Parse(TreasureDevicestmp2.ToString());
                         var newtmpid = TreasureDevicesobjtmp2["id"].ToString();
-                        if (newtmpid.Length == 6)
+                        switch (newtmpid.Length)
                         {
-                            TreasureDevices.FinTDID_TMP = newtmpid;
-                            foreach (var TDDtmp2 in mstTreasureDeviceDetailArray) //查找某个字段与值
-                                if (((JObject) TDDtmp2)["id"].ToString() == TreasureDevices.FinTDID_TMP)
-                                {
-                                    var TDDobjtmp2 = JObject.Parse(TDDtmp2.ToString());
-                                    NPDetail = TDDobjtmp2["detail"].ToString().Replace("[{0}]", " [Lv.1 - Lv.5] ")
-                                        .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                        .Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋").Replace("\r\n \r\n", "\r\n");
-                                    TreasureDevices.TDDetailDisplay = NPDetail;
-                                }
-                        }
-                        else if (newtmpid.Length == 7)
-                        {
-                            if (newtmpid.Substring(0, 2) == "10" || newtmpid.Substring(0, 2) == "11" ||
-                                newtmpid.Substring(0, 2) == "23" || newtmpid.Substring(0, 2) == "25")
+                            case 6:
                             {
                                 TreasureDevices.FinTDID_TMP = newtmpid;
                                 foreach (var TDDtmp2 in mstTreasureDeviceDetailArray) //查找某个字段与值
@@ -786,10 +757,34 @@ namespace WindowsFormsApp1
                                         var TDDobjtmp2 = JObject.Parse(TDDtmp2.ToString());
                                         NPDetail = TDDobjtmp2["detail"].ToString().Replace("[{0}]", " [Lv.1 - Lv.5] ")
                                             .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "")
-                                            .Replace("[/o]", "").Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋")
+                                            .Replace("[/o]", "")
+                                            .Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋")
                                             .Replace("\r\n \r\n", "\r\n");
                                         TreasureDevices.TDDetailDisplay = NPDetail;
                                     }
+
+                                break;
+                            }
+                            case 7:
+                            {
+                                if (newtmpid.Substring(0, 2) == "10" || newtmpid.Substring(0, 2) == "11" ||
+                                    newtmpid.Substring(0, 2) == "23" || newtmpid.Substring(0, 2) == "25")
+                                {
+                                    TreasureDevices.FinTDID_TMP = newtmpid;
+                                    foreach (var TDDtmp2 in mstTreasureDeviceDetailArray) //查找某个字段与值
+                                        if (((JObject) TDDtmp2)["id"].ToString() == TreasureDevices.FinTDID_TMP)
+                                        {
+                                            var TDDobjtmp2 = JObject.Parse(TDDtmp2.ToString());
+                                            NPDetail = TDDobjtmp2["detail"].ToString()
+                                                .Replace("[{0}]", " [Lv.1 - Lv.5] ")
+                                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "")
+                                                .Replace("[/o]", "").Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋")
+                                                .Replace("\r\n \r\n", "\r\n");
+                                            TreasureDevices.TDDetailDisplay = NPDetail;
+                                        }
+                                }
+
+                                break;
                             }
                         }
                     }
@@ -843,45 +838,40 @@ namespace WindowsFormsApp1
             textBox2.Text = svtName;
             textBox3.Text = svtNameDisplay;
             textBox4.Text = ClassName[classData];
-            if (classData == 3)
+            switch (classData)
             {
-                label44.Text = "( x 1.05 △)";
-                label43.Text = "( x 1.05 △)";
-            }
-            else if (classData == 5)
-            {
-                label44.Text = "( x 0.9 ▽)";
-                label43.Text = "( x 0.9 ▽)";
-            }
-            else if (classData == 6)
-            {
-                label44.Text = "( x 0.9 ▽)";
-                label43.Text = "( x 0.9 ▽)";
-            }
-            else if (classData == 2)
-            {
-                label44.Text = "( x 0.95 ▽)";
-                label43.Text = "( x 0.95 ▽)";
-            }
-            else if (classData == 7)
-            {
-                label44.Text = "( x 1.1 △)";
-                label43.Text = "( x 1.1 △)";
-            }
-            else if (classData == 9)
-            {
-                label44.Text = "( x 1.1 △)";
-                label43.Text = "( x 1.1 △)";
-            }
-            else if (classData == 11)
-            {
-                label44.Text = "( x 1.1 △)";
-                label43.Text = "( x 1.1 △)";
-            }
-            else
-            {
-                label44.Text = "( x 1.0 -)";
-                label43.Text = "( x 1.0 -)";
+                case 3:
+                    label44.Text = "( x 1.05 △)";
+                    label43.Text = "( x 1.05 △)";
+                    break;
+                case 5:
+                    label44.Text = "( x 0.9 ▽)";
+                    label43.Text = "( x 0.9 ▽)";
+                    break;
+                case 6:
+                    label44.Text = "( x 0.9 ▽)";
+                    label43.Text = "( x 0.9 ▽)";
+                    break;
+                case 2:
+                    label44.Text = "( x 0.95 ▽)";
+                    label43.Text = "( x 0.95 ▽)";
+                    break;
+                case 7:
+                    label44.Text = "( x 1.1 △)";
+                    label43.Text = "( x 1.1 △)";
+                    break;
+                case 9:
+                    label44.Text = "( x 1.1 △)";
+                    label43.Text = "( x 1.1 △)";
+                    break;
+                case 11:
+                    label44.Text = "( x 1.1 △)";
+                    label43.Text = "( x 1.1 △)";
+                    break;
+                default:
+                    label44.Text = "( x 1.0 -)";
+                    label43.Text = "( x 1.0 -)";
+                    break;
             }
 
             textBox5.Text = svtrarity + " ☆";
@@ -1180,7 +1170,7 @@ namespace WindowsFormsApp1
             if (SkillLvs.EEB)
             {
                 JibanStringData.str1 = "该解析器由闲着蛋疼啥也不会的现学C#的烂技术的作者ACPudding编写而成.";
-                JibanStringData.str2 = "当前版本: V1.6_b1";
+                JibanStringData.str2 = "当前版本: V1.6.5";
                 JibanStringData.str3 =
                     "下载游戏数据与解密部分拷贝了nishuoshenme的FGO资源解析器的代码.\r\ngithub地址: https://www.github.com/nishuoshenme";
                 JibanStringData.str4 = "作者BGO ID 爱吸吸果冻 \r\n日服ID エイシープリン";
@@ -1444,13 +1434,12 @@ namespace WindowsFormsApp1
                         .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
                     svtSKFuncIDList = new List<string>(svtSKFuncID.Split(','));
                     svtSKFuncIDArray = svtSKFuncIDList.ToArray();
-                    foreach (var skfuncidtmp in svtSKFuncIDArray)
-                    foreach (var functmp in mstFuncArray)
-                        if (((JObject) functmp)["id"].ToString() == skfuncidtmp)
-                        {
-                            var mstFuncobjtmp = JObject.Parse(functmp.ToString());
-                            svtSKFuncList.Add(mstFuncobjtmp["popupText"].ToString());
-                        }
+                    svtSKFuncList.AddRange(from skfuncidtmp in svtSKFuncIDArray
+                        from functmp in mstFuncArray
+                        where ((JObject) functmp)["id"].ToString() == skfuncidtmp
+                        select JObject.Parse(functmp.ToString())
+                        into mstFuncobjtmp
+                        select mstFuncobjtmp["popupText"].ToString());
                 }
             }
 
@@ -1650,13 +1639,12 @@ namespace WindowsFormsApp1
                         .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
                     svtSKFuncIDList = new List<string>(svtSKFuncID.Split(','));
                     svtSKFuncIDArray = svtSKFuncIDList.ToArray();
-                    foreach (var skfuncidtmp in svtSKFuncIDArray)
-                    foreach (var functmp in mstFuncArray)
-                        if (((JObject) functmp)["id"].ToString() == skfuncidtmp)
-                        {
-                            var mstFuncobjtmp = JObject.Parse(functmp.ToString());
-                            svtSKFuncList.Add(mstFuncobjtmp["popupText"].ToString());
-                        }
+                    svtSKFuncList.AddRange(from skfuncidtmp in svtSKFuncIDArray
+                        from functmp in mstFuncArray
+                        where ((JObject) functmp)["id"].ToString() == skfuncidtmp
+                        select JObject.Parse(functmp.ToString())
+                        into mstFuncobjtmp
+                        select mstFuncobjtmp["popupText"].ToString());
                 }
             }
 
@@ -1857,13 +1845,12 @@ namespace WindowsFormsApp1
                         .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
                     svtSKFuncIDList = new List<string>(svtSKFuncID.Split(','));
                     svtSKFuncIDArray = svtSKFuncIDList.ToArray();
-                    foreach (var skfuncidtmp in svtSKFuncIDArray)
-                    foreach (var functmp in mstFuncArray)
-                        if (((JObject) functmp)["id"].ToString() == skfuncidtmp)
-                        {
-                            var mstFuncobjtmp = JObject.Parse(functmp.ToString());
-                            svtSKFuncList.Add(mstFuncobjtmp["popupText"].ToString());
-                        }
+                    svtSKFuncList.AddRange(from skfuncidtmp in svtSKFuncIDArray
+                        from functmp in mstFuncArray
+                        where ((JObject) functmp)["id"].ToString() == skfuncidtmp
+                        select JObject.Parse(functmp.ToString())
+                        into mstFuncobjtmp
+                        select mstFuncobjtmp["popupText"].ToString());
                 }
             }
 
@@ -1878,60 +1865,58 @@ namespace WindowsFormsApp1
         private void label1_Click(object sender, EventArgs e)
         {
             SkillLvs.EastenEggCount = SkillLvs.EastenEggCount + 1;
-            if (SkillLvs.EastenEggCount == 10)
-            {
-                textBox2.Text = "エイシープリン";
-                textBox3.Text = "ACPudding";
-                textBox4.Text = "Caster";
-                textBox5.Text = "2" + " ☆";
-                textBox6.Text = "男性";
-                textBox7.Text = "人";
-                textBox8.Text = "???";
-                textBox9.Text = "???";
-                textBox10.Text = "∞";
-                textBox11.Text = "10.9" + "%";
-                textBox12.Text = "39.0" + "%";
-                textBox13.Text = "50";
-                textBox14.Text = "1.08%";
-                textBox15.Text = "家里蹲 A,狂化 E+";
-                textBox16.Text = "1384";
-                textBox17.Text = "1136";
-                textBox18.Text = "7534";
-                textBox19.Text = "6475";
-                textBox20.Text = "[Q,A,A,B,B]";
-                textBox21.Text = "3" + " hit " + "[16,33,51]";
-                textBox22.Text = "6" + " hit " + "[4,9,14,19,23,31]";
-                textBox23.Text = "2" + " hit " + "[33,67]";
-                textBox24.Text = "3" + " hit " + "[12,25,63]";
-                textBox25.Text = "10" + " hit " + "[3,5,3,7,8,10,12,14,16,22]";
-                textBox26.Text = "Buster";
-                textBox27.Text = "单体宝具";
-                textBox28.Text = "D" + " ( " + "对人宝具" + " ) ";
-                textBox29.Text = "ノー　ワーク・ベター　ライブ";
-                textBox30.Text = "おやすみなさい、勤勉な人々";
-                textBox31.Text = "敵単体に超強力な〔NPチャージのサーヴァント〕特攻攻撃 [Lv.1 - Lv.5] <オーバーチャージで効果UP> \r\n + 自身のNPをリチャージ";
-                textBox32.Text = "怪力 B";
-                textBox33.Text = "自身の攻撃力をアップ[Lv.1 - Lv.10](2ターン)";
-                textBox35.Text = "鑑識眼(宅) A";
-                textBox34.Text = "味方単体のスター集中度をアップ[Lv.1 - Lv.10](1ターン)\r\n + スターを大量獲得[Lv.1 - Lv.10]";
-                textBox37.Text = "良心がない EX";
-                textBox36.Text =
-                    "味方単体のNPを大量増やす[Lv.1 - Lv.10] \r\n + 宝具威力を超绝アップ[Lv.1 - Lv.10] \r\n + 〔1ターン後即死〕状態を付与 【デメリット】";
-                textBox38.Text = "Quick: " + "1.08%" + "   Arts: " + "1.08%" + "   Buster: " + "1.08%" + "\r\nExtra: " +
-                                 "1.08%" + "   宝具: " + "1.08%" + "   受击: " + "4.00%";
-                label41.Text = "筋力: " + "C" + "    耐久: " + "B+" + "    敏捷: " + "C+" +
-                               "\n魔力: " + "B++" + "    幸运: " + "B" + "    宝具: " + "C-";
-                MessageBox.Show("点击羁绊故事可查看软件和作者信息.", "About:", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                SkillLvs.EEB = true;
-                SkillLvs.EastenEggCount = 0;
-                button2.Enabled = true;
-                button3.Enabled = true;
-                button6.Enabled = true;
-                button9.Enabled = true;
-                button10.Enabled = true;
-                label43.Text = "( x 0.9 ▽)";
-                label44.Text = "( x 0.9 ▽)";
-            }
+            if (SkillLvs.EastenEggCount != 10) return;
+            textBox2.Text = "エイシープリン";
+            textBox3.Text = "ACPudding";
+            textBox4.Text = "Caster";
+            textBox5.Text = "2" + " ☆";
+            textBox6.Text = "男性";
+            textBox7.Text = "人";
+            textBox8.Text = "???";
+            textBox9.Text = "???";
+            textBox10.Text = "∞";
+            textBox11.Text = "10.9" + "%";
+            textBox12.Text = "39.0" + "%";
+            textBox13.Text = "50";
+            textBox14.Text = "1.08%";
+            textBox15.Text = "家里蹲 A,狂化 E+";
+            textBox16.Text = "1384";
+            textBox17.Text = "1136";
+            textBox18.Text = "7534";
+            textBox19.Text = "6475";
+            textBox20.Text = "[Q,A,A,B,B]";
+            textBox21.Text = "3" + " hit " + "[16,33,51]";
+            textBox22.Text = "6" + " hit " + "[4,9,14,19,23,31]";
+            textBox23.Text = "2" + " hit " + "[33,67]";
+            textBox24.Text = "3" + " hit " + "[12,25,63]";
+            textBox25.Text = "10" + " hit " + "[3,5,3,7,8,10,12,14,16,22]";
+            textBox26.Text = "Buster";
+            textBox27.Text = "单体宝具";
+            textBox28.Text = "D" + " ( " + "对人宝具" + " ) ";
+            textBox29.Text = "ノー　ワーク・ベター　ライブ";
+            textBox30.Text = "おやすみなさい、勤勉な人々";
+            textBox31.Text = "敵単体に超強力な〔NPチャージのサーヴァント〕特攻攻撃 [Lv.1 - Lv.5] <オーバーチャージで効果UP> \r\n + 自身のNPをリチャージ";
+            textBox32.Text = "怪力 B";
+            textBox33.Text = "自身の攻撃力をアップ[Lv.1 - Lv.10](2ターン)";
+            textBox35.Text = "鑑識眼(宅) A";
+            textBox34.Text = "味方単体のスター集中度をアップ[Lv.1 - Lv.10](1ターン)\r\n + スターを大量獲得[Lv.1 - Lv.10]";
+            textBox37.Text = "良心がない EX";
+            textBox36.Text =
+                "味方単体のNPを大量増やす[Lv.1 - Lv.10] \r\n + 宝具威力を超绝アップ[Lv.1 - Lv.10] \r\n + 〔1ターン後即死〕状態を付与 【デメリット】";
+            textBox38.Text = "Quick: " + "1.08%" + "   Arts: " + "1.08%" + "   Buster: " + "1.08%" + "\r\nExtra: " +
+                             "1.08%" + "   宝具: " + "1.08%" + "   受击: " + "4.00%";
+            label41.Text = "筋力: " + "C" + "    耐久: " + "B+" + "    敏捷: " + "C+" +
+                           "\n魔力: " + "B++" + "    幸运: " + "B" + "    宝具: " + "C-";
+            MessageBox.Show("点击羁绊故事可查看软件和作者信息.", "About:", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            SkillLvs.EEB = true;
+            SkillLvs.EastenEggCount = 0;
+            button2.Enabled = true;
+            button3.Enabled = true;
+            button6.Enabled = true;
+            button9.Enabled = true;
+            button10.Enabled = true;
+            label43.Text = "( x 0.9 ▽)";
+            label44.Text = "( x 0.9 ▽)";
         }
 
         private void button10_Click_1(object sender, EventArgs e)
@@ -1988,7 +1973,6 @@ namespace WindowsFormsApp1
             string svtTreasureDeviceFuncID;
             var svtTreasureDeviceFuncIDArray = new string[] { };
             List<string> svtTreasureDeviceFuncIDList;
-            var svtTreasureDeviceFuncList = new List<string>();
             string[] svtTreasureDeviceFuncArray;
             var svtTreasureDeviceFunc = string.Empty;
             var mstTreasureDeviceLv =
@@ -2106,15 +2090,12 @@ namespace WindowsFormsApp1
                 }
             }
 
-            foreach (var skfuncidtmp in svtTreasureDeviceFuncIDArray)
-            foreach (var functmp in mstFuncArray)
-                if (((JObject) functmp)["id"].ToString() == skfuncidtmp)
-                {
-                    var mstFuncobjtmp = JObject.Parse(functmp.ToString());
-                    svtTreasureDeviceFuncList.Add(mstFuncobjtmp["popupText"].ToString());
-                }
-
-            svtTreasureDeviceFuncArray = svtTreasureDeviceFuncList.ToArray();
+            svtTreasureDeviceFuncArray = (from skfuncidtmp in svtTreasureDeviceFuncIDArray
+                from functmp in mstFuncArray
+                where ((JObject) functmp)["id"].ToString() == skfuncidtmp
+                select JObject.Parse(functmp.ToString())
+                into mstFuncobjtmp
+                select mstFuncobjtmp["popupText"].ToString()).ToArray();
             svtTreasureDeviceFunc = string.Join(", ", svtTreasureDeviceFuncArray);
             SkillLvs.TDFuncstr = svtTreasureDeviceFunc;
             TDI.ShowDialog();
@@ -2122,29 +2103,6 @@ namespace WindowsFormsApp1
 
         private void button11_Click(object sender, EventArgs e)
         {
-            var BD = new Thread(bindown);
-            BD.Start();
-        }
-
-        public void bindown()
-        {
-            var path = Directory.GetCurrentDirectory();
-            var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
-            var folder = new DirectoryInfo(path + @"\Android\");
-            var result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top", "appVer=2.13.4");
-            var res = JObject.Parse(result);
-            if (res["response"][0]["fail"]["action"] != null)
-                if (res["response"][0]["fail"]["action"].ToString() == "app_version_up")
-                {
-                    var tmp = res["response"][0]["fail"]["detail"].ToString();
-                    tmp = Regex.Replace(tmp, @".*新ver.：(.*)、現.*", "$1", RegexOptions.Singleline);
-                    result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top", "appVer=" + tmp);
-                    res = JObject.Parse(result);
-                }
-
-            if (!Directory.Exists(gamedata.FullName))
-                Directory.CreateDirectory(gamedata.FullName);
-            File.WriteAllText(gamedata.FullName + "bin", result);
         }
 
         private void button7_Click_1(object sender, EventArgs e)
